@@ -1,0 +1,49 @@
+name: Update quotes and deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Covers US premarket through after-hours in both EST and EDT.
+    - cron: '2-57/5 8-23 * * 1-5'
+    - cron: '2-57/5 0 * * 2-6'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stock-dashboard-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - name: Test quote calculations
+        run: python3 -m unittest discover -s tests
+      - name: Fetch quotes
+        run: python3 scripts/update_quotes.py
+      - name: Prepare public files
+        run: |
+          mkdir -p _site
+          cp index.html quotes.js quotes.json _site/
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy website
+        id: deployment
+        uses: actions/deploy-pages@v4
