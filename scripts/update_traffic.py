@@ -1,7 +1,7 @@
 """Create a small snapshot from the Freeway Bureau's public VD feeds."""
 import json
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree as ET
@@ -33,6 +33,47 @@ def get_xml(name):
     for element in root.iter():
         element.tag = element.tag.rsplit("}", 1)[-1]
     return root
+
+
+def tdx_fallback():
+    """Read the alternate official TDX feed using cached static detector metadata."""
+    cached = Path("traffic.json")
+    if not cached.exists():
+        return False
+    reference = json.loads(cached.read_text(encoding="utf-8"))
+    known = {row["id"]: row for row in reference.get("rows", [])}
+    request = Request(
+        "https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/Live/VD/Freeway?%24top=3000&%24format=JSON",
+        headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"},
+    )
+    with urlopen(request, timeout=18) as response:
+        result = json.load(response)
+    source_time = result.get("SrcUpdateTime") or result.get("UpdateTime")
+    if not source_time or datetime.now(timezone.utc) - datetime.fromisoformat(source_time.replace("Z", "+00:00")) > timedelta(minutes=15):
+        raise ValueError("TDX data is older than 15 minutes")
+    rows = []
+    for vd in result.get("VDLives", []):
+        if vd.get("Status") != 0:
+            continue
+        for flow in vd.get("LinkFlows", []):
+            old = known.get(f'{vd.get("VDID")}:{flow.get("LinkID")}')
+            if not old:
+                continue
+            lanes = []
+            for lane in flow.get("Lanes", []):
+                speed = number(lane.get("Speed"))
+                volumes = [number(vehicle.get("Volume")) for vehicle in lane.get("Vehicles", [])]
+                if speed is not None and volumes and all(v is not None for v in volumes):
+                    lanes.append({"speed": speed, "volume": int(sum(volumes))})
+            if lanes:
+                rows.append({**old, "time": vd.get("DataCollectTime"), "lanes": lanes})
+    if len(rows) < 100:
+        raise ValueError("TDX returned too few matching detectors")
+    cached.write_text(json.dumps({"generatedAt": datetime.now(timezone.utc).isoformat(),
+                                  "sourceTime": source_time, "rows": rows},
+                                 ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    print(f"Updated {len(rows)} detector rows through TDX")
+    return True
 
 
 def main():
@@ -89,6 +130,11 @@ def main():
         print(f"Updated {len(rows)} traffic detector rows")
     except Exception as error:
         print(f"Traffic source unavailable: {error}")
+        try:
+            if tdx_fallback():
+                return
+        except Exception as fallback_error:
+            print(f"TDX unavailable: {fallback_error}")
         cached = Path("traffic.json")
         if cached.exists():
             try:
