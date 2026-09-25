@@ -31,12 +31,10 @@ jobs:
           if [ ! -s quotes.json ]; then
             curl -fsSL --max-time 15 https://william12304.github.io/stock-dashboard/quotes.json -o quotes.json || printf '%s' '{"quotes":{}}' > quotes.json
           fi
-      - name: Fetch freeway traffic
-        run: python3 scripts/update_traffic.py
       - name: Prepare public files
         run: |
           mkdir -p _site
-          cp index.html stocks.html traffic.html highway_links.geojson GEOMETRY-LICENSE.txt quotes.js quotes.json traffic.json _site/
+          cp index.html stocks.html traffic.html quotes.js quotes.json _site/
       - uses: actions/upload-pages-artifact@v4
         with:
           path: _site
