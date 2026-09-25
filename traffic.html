@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#101217;color:#f6f8fc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{height:100dvh;min-height:500px;display:flex;flex-direction:column}.top{padding:14px 16px 0;background:#101217;z-index:1000}.header{display:flex;justify-content:space-between;align-items:center;gap:12px}.back{color:#bfd1ea;text-decoration:none;font-size:.95rem}h1{font-size:1.32rem;line-height:1.3;margin:8px 0 14px;text-align:center}.tabs{display:flex;gap:4px;overflow:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tabs button{background:none;color:#c7cbd4;border:0;border-bottom:3px solid transparent;font:inherit;padding:10px 17px;white-space:nowrap;cursor:pointer;font-size:1rem}.tabs button[aria-selected=true]{border-color:#78d7a0;color:white;font-weight:700}.info{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 16px;background:#171b21;border-top:1px solid #29303a;font-size:.88rem}.legend{display:flex;align-items:center;gap:9px;overflow:auto;white-space:nowrap}.chip{display:inline-flex;align-items:center;gap:4px}.swatch{width:13px;height:13px;border-radius:3px;display:inline-block}.actions{display:flex;gap:6px}.refresh{color:#e8f1ff;background:#263346;border:1px solid #43536a;border-radius:8px;padding:7px 10px;font:inherit;white-space:nowrap;cursor:pointer}.refresh:disabled{opacity:.6}.refresh.active{background:#235486;border-color:#7ac1ff}.info{flex-direction:column;align-items:stretch}.actions{order:0;justify-content:space-between}.legend{order:1;justify-content:space-between;gap:4px;overflow:visible}.chip{flex-direction:column;font-size:.78rem;text-align:center;min-width:0}.swatch{width:32px;height:8px;border:1px solid rgba(255,255,255,.35);border-radius:5px;box-shadow:0 0 0 2px #080b0f}.time{padding:7px 16px;background:#171b21;color:#cad5e2;font-size:.82rem;min-height:32px}.time.stale{color:#ffd18d;background:#392a1b}.map{flex:1;min-height:0;background:#292d34}.leaflet-container{background:#292d34}.leaflet-control-attribution{background:rgba(15,18,22,.8)!important;color:#dae0e8!important}.leaflet-control-attribution a{color:#a8d0ff!important}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#1d2530;color:#fff}.foot{padding:7px 15px;background:#101217;color:#aab7c7;font-size:.73rem;line-height:1.35}.foot a{color:#a8d0ff}@media(min-width:800px){.top,.info,.time,.foot{padding-left:max(16px,calc((100vw - 1100px)/2));padding-right:max(16px,calc((100vw - 1100px)/2))}}
-.map{min-height:360px}.map-choose{display:flex;align-items:center;gap:8px;padding:7px 12px;background:#121821;font-size:.88rem}.map-choose select,.map-choose button{color:white;background:#263346;border:1px solid #788ea8;border-radius:6px;padding:7px;font:inherit}.map-choose select{flex:1;min-width:0}.map-choose button{white-space:nowrap}.map-choose button[hidden]{display:none}.map{flex:1!important}</style></head><body><div class="app"><header class="top"><div class="header"><a class="back" href="./">← 首頁</a><h1>國道即時路況</h1><span style="width:3rem"></span></div><nav class="tabs" aria-label="查看區域"><button data-region="north" aria-selected="true">北部</button><button data-region="middle">中部</button><button data-region="south">南部</button><button data-region="all">全臺</button></nav></header><div class="info"><div class="legend" aria-label="路況顏色說明"><span class="chip"><i class="swatch" style="background:#21db70"></i>順暢</span><span class="chip"><i class="swatch" style="background:#ffe344"></i>車多</span><span class="chip"><i class="swatch" style="background:#ff9926"></i>緩慢</span><span class="chip"><i class="swatch" style="background:#ff304a"></i>壅塞</span><span class="chip"><i class="swatch" style="background:#b44bff"></i>嚴重</span></div><div class="actions"><button class="refresh" id="locate" type="button">◎ 我的位置</button><button class="refresh" id="refresh" type="button">更新</button></div></div><div class="time" id="status" role="status">讀取路況中…</div><div class="map-choose"><label for="road-select-map">選擇國道</label><select id="road-select-map" aria-label="地圖國道"><option value="1">國道1號</option><option value="2">國道2號</option><option value="3">國道3號</option><option value="4">國道4號</option><option value="5">國道5號</option><option value="6">國道6號</option><option value="8">國道8號</option><option value="10">國道10號</option></select><button id="level-map" type="button">切換至國一高架</button></div><div id="map" class="map" aria-label="每公里方格國道路況地圖"></div><footer class="foot">資料：<a href="https://data.gov.tw/dataset/37662" target="_blank" rel="noopener">高公局車輛偵測器</a>；底圖 © OpenStreetMap、CARTO；<a href="https://github.com/watermelon1024/freeway-speed-ui" target="_blank" rel="noopener">路段線型</a>（<a href="GEOMETRY-LICENSE.txt">授權</a>）。灰色路線代表該段暫無有效偵測值。<a href="https://1968.freeway.gov.tw/" target="_blank" rel="noopener">官方 1968</a></footer></div>
+.map{min-height:360px}.map-choose{display:flex;align-items:center;gap:8px;padding:7px 12px;background:#121821;font-size:.88rem}.map-choose select,.map-choose button{color:white;background:#263346;border:1px solid #788ea8;border-radius:6px;padding:7px;font:inherit}.map-choose select{flex:1;min-width:0}.map-choose button{white-space:nowrap}.map-choose button[hidden]{display:none}.map{flex:1!important}.direction-pick{display:flex;align-items:center;gap:5px;padding:5px 12px;background:#121821}.direction-pick button{flex:1;padding:7px 3px;border:1px solid #61758f;border-radius:5px;color:#f4f8ff;background:#253447;font:700 .86rem -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.direction-pick button[aria-pressed="true"]{background:#3972a8;border-color:#a7d2ff}</style></head><body><div class="app"><header class="top"><div class="header"><a class="back" href="./">← 首頁</a><h1>國道即時路況</h1><span style="width:3rem"></span></div><nav class="tabs" aria-label="查看區域"><button data-region="north" aria-selected="true">北部</button><button data-region="middle">中部</button><button data-region="south">南部</button><button data-region="all">全臺</button></nav></header><div class="info"><div class="legend" aria-label="路況顏色說明"><span class="chip"><i class="swatch" style="background:#21db70"></i>順暢</span><span class="chip"><i class="swatch" style="background:#ffe344"></i>車多</span><span class="chip"><i class="swatch" style="background:#ff9926"></i>緩慢</span><span class="chip"><i class="swatch" style="background:#ff304a"></i>壅塞</span><span class="chip"><i class="swatch" style="background:#b44bff"></i>嚴重</span></div><div class="actions"><button class="refresh" id="locate" type="button">◎ 我的位置</button><button class="refresh" id="refresh" type="button">更新</button></div></div><div class="time" id="status" role="status">讀取路況中…</div><div class="map-choose"><label for="road-select-map">選擇國道</label><select id="road-select-map" aria-label="地圖國道"><option value="1">國道1號</option><option value="2">國道2號</option><option value="3">國道3號</option><option value="4">國道4號</option><option value="5">國道5號</option><option value="6">國道6號</option><option value="8">國道8號</option><option value="10">國道10號</option></select><button id="level-map" type="button">切換至國一高架</button></div><div class="direction-pick" aria-label="查看行車方向"><button type="button" data-direction="both" aria-pressed="true">雙向</button><button type="button" data-direction="first" aria-pressed="false">↑ 北上</button><button type="button" data-direction="second" aria-pressed="false">↓ 南下</button></div><div id="map" class="map" aria-label="每公里方格國道路況地圖"></div><footer class="foot">資料：<a href="https://data.gov.tw/dataset/37662" target="_blank" rel="noopener">高公局車輛偵測器</a>；底圖 © OpenStreetMap、CARTO；<a href="https://github.com/watermelon1024/freeway-speed-ui" target="_blank" rel="noopener">路段線型</a>（<a href="GEOMETRY-LICENSE.txt">授權</a>）。灰色路線代表該段暫無有效偵測值。<a href="https://1968.freeway.gov.tw/" target="_blank" rel="noopener">官方 1968</a></footer></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>
 const statusEl = document.querySelector('#status');
 const locateButton = document.querySelector('#locate');
@@ -14,7 +14,7 @@ const views = {
   all: { center: [23.74, 120.9], zoom: 7 }
 };
 let map, roadLayer, casingLayer, roads, traffic, userMarker, userPosition, nearbyFeatures = [];
-let region = 'north', dataMessage = '讀取路況中…';
+let region = 'north', directionView = 'both', dataMessage = '讀取路況中…';
 
 function stamp(value) {
   const date = new Date(value);
@@ -106,7 +106,7 @@ function chooseRouteAt(latitude, longitude) {
   if (!nearest) return;
   const road = /^N(\d+)/.exec(nearest.code);
   roadNumber = road[1]; roadLevel = nearest.code === 'N1H' ? 'elevated' : 'flat';
-  document.querySelector('#road-select-map').value = roadNumber; updateLevelButton();
+  document.querySelector('#road-select-map').value = roadNumber; updateLevelButton(); updateDirections();
 }
 
 // Find roads near the GPS point, including lines that cross the area between vertices.
@@ -186,13 +186,21 @@ function buildMapCells() {
     }
   }
 }
+function updateDirections() {
+  const ew=['2','4','6','8','10'].includes(roadNumber);
+  document.querySelector('[data-direction=first]').textContent=ew?'→ 東行':'↑ 北上';
+  document.querySelector('[data-direction=second]').textContent=ew?'← 西行':'↓ 南下';
+  for(const button of document.querySelectorAll('[data-direction]')) button.setAttribute('aria-pressed',String(button.dataset.direction===directionView));
+}
 function updateLevelButton() {
   const button=document.querySelector('#level-map');
   button.hidden=roadNumber!=='1';
   button.textContent=roadLevel==='flat'?'切換至國一高架':'切換至國一平面';
 }
 function displayedRoads() {
-  const selected=mapCells.filter(c=>c.code===routeCode());
+  const eastWest=['2','4','6','8','10'].includes(roadNumber);
+  const first=eastWest?'E':'N', second=eastWest?'W':'S';
+  const selected=mapCells.filter(c=>c.code===routeCode() && (directionView==='both' || c.direction===(directionView==='first'?first:second)));
   if(region!=='nearby'||!userPosition) return selected;
   const [lat,lon]=userPosition;
   const close=selected.filter(c=>lineDistanceKm(c.coordinates,lat,lon)<12);
@@ -215,7 +223,13 @@ function draw() {
   casingLayer=L.layerGroup().addTo(map);
   roadLayer=L.layerGroup().addTo(map);
   for(const cell of cells){
-    const latlngs=cell.coordinates.map(([lon,lat])=>[lat,lon]);
+    // Shift each carriageway to its own screen lane, keeping opposite directions apart.
+    const points=cell.coordinates.map(([lon,lat])=>map.latLngToLayerPoint([lat,lon]));
+    const latlngs=points.map((point,i)=>{
+      const before=points[Math.max(0,i-1)], after=points[Math.min(points.length-1,i+1)];
+      const dx=after.x-before.x,dy=after.y-before.y,len=Math.hypot(dx,dy)||1;
+      return map.layerPointToLatLng(L.point(point.x-dy/len*8,point.y+dx/len*8));
+    });
     const item=kilometerBins.get(cell.code+':'+cell.direction+':'+cell.kilometer);
     const label=congestionName(item?.speed??null);
     L.polyline(latlngs,{renderer,color:'#080b0f',weight:20,opacity:1,lineCap:'butt',lineJoin:'bevel',interactive:false}).addTo(casingLayer);
@@ -223,6 +237,40 @@ function draw() {
       .bindPopup(cell.code+' '+cell.kilometer+'K '+({N:'北上',S:'南下',E:'東行',W:'西行'}[cell.direction])+'：'+label).addTo(roadLayer);
   }
   if(userMarker) userMarker.bringToFront();
+}
+// Ask the official one-minute feed on every page visit. A Pages snapshot is only a fallback.
+async function freshSnapshot(reference) {
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),9000);
+  try {
+    const response=await fetch('https://tisvcloud.freeway.gov.tw/history/motc20/VDLive.xml?t='+Date.now(),{
+      cache:'no-store',signal:controller.signal
+    });
+    if(!response.ok) throw Error('官方來源回應失敗');
+    const xml=new DOMParser().parseFromString(await response.text(),'application/xml');
+    if(xml.getElementsByTagName('parsererror').length) throw Error('官方資料格式錯誤');
+    const nodes=(node,name)=>Array.from(node.getElementsByTagNameNS('*',name));
+    const value=(node,name)=>nodes(node,name)[0]?.textContent?.trim()||'';
+    const known=new Map(reference.rows.map(row=>[row.id,row]));
+    const rows=[];
+    for(const vd of nodes(xml,'VDLive')) {
+      if(value(vd,'Status')!=='0') continue;
+      const id=value(vd,'VDID'),time=value(vd,'DataCollectTime');
+      for(const flow of nodes(vd,'LinkFlow')) {
+        const old=known.get(id+':'+value(flow,'LinkID'));
+        if(!old) continue;
+        const lanes=nodes(flow,'Lane').map(lane=>({
+          speed:Number(value(lane,'Speed')),
+          volume:nodes(lane,'Vehicle').reduce((sum,v)=>sum+Number(value(v,'Volume')||0),0)
+        })).filter(lane=>Number.isFinite(lane.speed)&&lane.speed>=0&&Number.isFinite(lane.volume));
+        if(lanes.length) rows.push({...old,time,lanes});
+      }
+    }
+    if(rows.length<100) throw Error('官方測點資料不足');
+    const rawTime=value(xml,'UpdateTime')||rows[0].time;
+    const sourceTime=/Z$|[+-]\d\d:\d\d$/.test(rawTime)?rawTime:rawTime+'+08:00';
+    return {rows,sourceTime};
+  } finally { clearTimeout(timer); }
 }
 async function load() {
   statusEl.textContent = '讀取路況中…';
@@ -237,14 +285,16 @@ async function load() {
     if (!response.ok) throw Error('資料讀取失敗');
     roads = geometry;
     buildMapCells();
-    const snapshot = await response.json();
+    const cached = await response.json();
+    let snapshot=cached, direct=false;
+    try { snapshot=await freshSnapshot(cached); direct=true; } catch(error) { /* Keep the dated fallback. */ }
     traffic = values(snapshot);
     buildKilometerData(snapshot);
     const sourceTime = snapshot.sourceTime || snapshot.generatedAt;
     const age = Date.now() - new Date(sourceTime).getTime();
     const stale = !Number.isFinite(age) || age > 30 * 60 * 1000;
-    dataMessage = (stale ? '⚠ 資料已過期｜' : '') + '資料時間：' + stamp(sourceTime);
-    statusEl.classList.toggle('stale', stale);
+    dataMessage = (stale ? '⚠ 資料已過期｜' : '') + (direct ? '官方資料｜' : '⚠ 官方來源未連線，顯示快照｜') + '資料時間：' + stamp(sourceTime);
+    statusEl.classList.toggle('stale', stale || !direct);
     statusEl.textContent = dataMessage;
     draw();
   } catch (error) {
@@ -302,13 +352,24 @@ if (window.L) {
   locateButton.onclick = locate;
   document.querySelector('#road-select-map').onchange = event => {
     roadNumber = event.target.value; roadLevel = 'flat';
-    updateLevelButton(); draw();
+    updateLevelButton(); updateDirections(); draw();
   };
   document.querySelector('#level-map').onclick = () => {
     roadLevel = roadLevel === 'flat' ? 'elevated' : 'flat';
     updateLevelButton(); draw();
   };
-  updateLevelButton();
+  document.querySelectorAll('[data-direction]').forEach(button => button.onclick = () => {
+    directionView=button.dataset.direction; updateDirections(); draw();
+  });
+  map.on('zoomend',draw);
+  updateLevelButton(); updateDirections();
+  let hiddenAt=0;
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden) hiddenAt=Date.now();
+    else if(hiddenAt && Date.now()-hiddenAt>30000) load();
+  });
+  window.addEventListener('pageshow',event=>{if(event.persisted) load();});
+  setInterval(()=>{if(!document.hidden) load();},60000);
   load();
 } else {
   statusEl.textContent = '地圖元件載入失敗，請重新整理頁面。';
