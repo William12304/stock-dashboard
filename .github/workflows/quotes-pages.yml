@@ -5,9 +5,8 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    # Covers US premarket through after-hours in both EST and EDT.
-    - cron: '2-57/5 8-23 * * 1-5'
-    - cron: '2-57/5 0 * * 2-6'
+    # Public traffic snapshot, around every ten minutes (GitHub scheduling can lag).
+    - cron: '2-52/10 * * * *'
 
 permissions:
   contents: read
@@ -25,11 +24,19 @@ jobs:
       - name: Test quote calculations
         run: python3 -m unittest discover -s tests
       - name: Fetch quotes
+        continue-on-error: true
         run: python3 scripts/update_quotes.py
+      - name: Preserve last quotes if quote provider is unavailable
+        run: |
+          if [ ! -s quotes.json ]; then
+            curl -fsSL --max-time 15 https://william12304.github.io/stock-dashboard/quotes.json -o quotes.json || printf '%s' '{"quotes":{}}' > quotes.json
+          fi
+      - name: Fetch freeway traffic
+        run: python3 scripts/update_traffic.py
       - name: Prepare public files
         run: |
           mkdir -p _site
-          cp index.html quotes.js quotes.json _site/
+          cp index.html stocks.html traffic.html quotes.js quotes.json traffic.json _site/
       - uses: actions/upload-pages-artifact@v4
         with:
           path: _site
