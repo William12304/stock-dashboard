@@ -3,13 +3,13 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#101217;color:#f6f8fc;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{height:100dvh;min-height:500px;display:flex;flex-direction:column}.top{padding:14px 16px 0;background:#101217;z-index:1000}.header{display:flex;justify-content:space-between;align-items:center;gap:12px}.back{color:#bfd1ea;text-decoration:none;font-size:.95rem}h1{font-size:1.32rem;line-height:1.3;margin:8px 0 14px;text-align:center}.tabs{display:flex;gap:4px;overflow:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tabs button{background:none;color:#c7cbd4;border:0;border-bottom:3px solid transparent;font:inherit;padding:10px 17px;white-space:nowrap;cursor:pointer;font-size:1rem}.tabs button[aria-selected=true]{border-color:#78d7a0;color:white;font-weight:700}.info{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 16px;background:#171b21;border-top:1px solid #29303a;font-size:.88rem}.legend{display:flex;align-items:center;gap:9px;overflow:auto;white-space:nowrap}.chip{display:inline-flex;align-items:center;gap:4px}.swatch{width:13px;height:13px;border-radius:3px;display:inline-block}.actions{display:flex;gap:6px}.refresh{color:#e8f1ff;background:#263346;border:1px solid #43536a;border-radius:8px;padding:7px 10px;font:inherit;white-space:nowrap;cursor:pointer}.refresh:disabled{opacity:.6}.refresh.active{background:#235486;border-color:#7ac1ff}.info{flex-direction:column;align-items:stretch}.actions{order:0;justify-content:space-between}.legend{order:1;justify-content:space-between;gap:4px;overflow:visible}.chip{flex-direction:column;font-size:.78rem;text-align:center;min-width:0}.swatch{width:32px;height:8px;border:1px solid rgba(255,255,255,.35);border-radius:5px;box-shadow:0 0 0 2px #080b0f}.time{padding:7px 16px;background:#171b21;color:#cad5e2;font-size:.82rem;min-height:32px}.time.stale{color:#ffd18d;background:#392a1b}.map{flex:1;min-height:0;background:#292d34}.leaflet-container{background:#292d34}.leaflet-control-attribution{background:rgba(15,18,22,.8)!important;color:#dae0e8!important}.leaflet-control-attribution a{color:#a8d0ff!important}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#1d2530;color:#fff}.foot{padding:7px 15px;background:#101217;color:#aab7c7;font-size:.73rem;line-height:1.35}.foot a{color:#a8d0ff}@media(min-width:800px){.top,.info,.time,.foot{padding-left:max(16px,calc((100vw - 1100px)/2));padding-right:max(16px,calc((100vw - 1100px)/2))}}
-.map{min-height:140px}.kilometer-panel{height:53dvh;min-height:350px;max-height:630px;display:flex;flex-direction:column;background:#121821;border-top:2px solid #596b83;padding:9px 12px 5px;gap:6px}.km-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px}.km-toolbar strong{font-size:1rem}.km-toolbar select{font:inherit;color:white;background:#263346;border:1px solid #52647b;border-radius:8px;padding:6px 9px;min-height:34px}.km-heading,.km-row{display:grid;grid-template-columns:50px repeat(2,minmax(0,1fr));gap:6px;align-items:center;text-align:center}.kilometer-panel.four .km-heading,.kilometer-panel.four .km-row{grid-template-columns:50px repeat(4,minmax(0,1fr))}.km-heading{color:#e5efff;font-weight:700;font-size:.8rem;line-height:1.2}.km-heading span{white-space:normal}.km-list{flex:1;overflow-y:auto;scrollbar-color:#63758a #17212d}.km-row{height:43px;margin:3px 0}.km-label{font-weight:800;font-size:.95rem}.km-cell{height:38px;display:block;width:100%;border-radius:3px;border:2px solid #e5efff;box-shadow:inset 0 0 0 1px #17202b;cursor:pointer}.km-cell.empty{border-color:#89939f;cursor:default}.km-cell:focus-visible{outline:3px solid white;outline-offset:2px}.km-foot{display:flex;justify-content:space-between;align-items:center;gap:8px}.km-foot button{color:white;background:#253447;border:1px solid #4b617b;border-radius:6px;font:inherit;padding:5px 10px}.km-foot span{color:#bdcce0;font-size:.85rem}.km-note{margin:0;color:#aebdd0;font-size:.73rem;line-height:1.35}@media(min-width:800px){.kilometer-panel{width:min(100%,740px);align-self:center;border:1px solid #52657a;border-radius:10px 10px 0 0;padding-inline:16px}}
-</style></head><body><div class="app"><header class="top"><div class="header"><a class="back" href="./">← 首頁</a><h1>國道即時路況</h1><span style="width:3rem"></span></div><nav class="tabs" aria-label="查看區域"><button data-region="north" aria-selected="true">北部</button><button data-region="middle">中部</button><button data-region="south">南部</button><button data-region="all">全臺</button></nav></header><div class="info"><div class="legend" aria-label="路況顏色說明"><span class="chip"><i class="swatch" style="background:#21db70"></i>順暢</span><span class="chip"><i class="swatch" style="background:#ffe344"></i>車多</span><span class="chip"><i class="swatch" style="background:#ff9926"></i>緩慢</span><span class="chip"><i class="swatch" style="background:#ff304a"></i>壅塞</span><span class="chip"><i class="swatch" style="background:#b44bff"></i>嚴重</span></div><div class="actions"><button class="refresh" id="locate" type="button">◎ 我的位置</button><button class="refresh" id="refresh" type="button">更新</button></div></div><div class="time" id="status" role="status">讀取路況中…</div><div id="map" class="map" aria-label="國道彩色路況地圖"></div><section class="kilometer-panel" aria-label="每公里雙向路況"><div class="km-toolbar"><strong>每公里路況</strong><select id="road-select" aria-label="選擇國道"><option value="1">國道1號</option><option value="2">國道2號</option><option value="3">國道3號</option><option value="4">國道4號</option><option value="5">國道5號</option><option value="6">國道6號</option><option value="8">國道8號</option><option value="10">國道10號</option></select></div><div class="km-heading" id="km-heading"><span>里程</span><span>平面<br>北上</span><span>平面<br>南下</span><span>高架<br>北上</span><span>高架<br>南下</span></div><div class="km-list" id="km-list" role="table" aria-label="各公里與雙向路況"></div><div class="km-foot"><button id="km-prev" type="button">前段</button><span id="km-range"></span><button id="km-next" type="button">後段</button></div><p class="km-note">一公里一排；實色方格代表該公里測點路況，灰色代表無資料。定位會選附近路段，無法判定平面或高架。</p></section><footer class="foot">資料：<a href="https://data.gov.tw/dataset/37662" target="_blank" rel="noopener">高公局車輛偵測器</a>；底圖 © OpenStreetMap、CARTO；<a href="https://github.com/watermelon1024/freeway-speed-ui" target="_blank" rel="noopener">路段線型</a>（<a href="GEOMETRY-LICENSE.txt">授權</a>）。灰色路線代表該段暫無有效偵測值。<a href="https://1968.freeway.gov.tw/" target="_blank" rel="noopener">官方 1968</a></footer></div>
+.map{min-height:360px}.kilometer-panel{display:none!important;height:53dvh;min-height:350px;max-height:630px;display:flex;flex-direction:column;background:#121821;border-top:2px solid #596b83;padding:9px 12px 5px;gap:6px}.km-toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px}.km-toolbar strong{font-size:1rem}.km-toolbar select{font:inherit;color:white;background:#263346;border:1px solid #52647b;border-radius:8px;padding:6px 9px;min-height:34px}.km-heading,.km-row{display:grid;grid-template-columns:50px repeat(2,minmax(0,1fr));gap:6px;align-items:center;text-align:center}.kilometer-panel.four .km-heading,.kilometer-panel.four .km-row{grid-template-columns:50px repeat(4,minmax(0,1fr))}.km-heading{color:#e5efff;font-weight:700;font-size:.8rem;line-height:1.2}.km-heading span{white-space:normal}.km-list{flex:1;overflow-y:auto;scrollbar-color:#63758a #17212d}.km-row{height:43px;margin:3px 0}.km-label{font-weight:800;font-size:.95rem}.km-cell{height:38px;display:block;width:100%;border-radius:3px;border:2px solid #e5efff;box-shadow:inset 0 0 0 1px #17202b;cursor:pointer}.km-cell.empty{border-color:#89939f;cursor:default}.km-cell:focus-visible{outline:3px solid white;outline-offset:2px}.km-foot{display:flex;justify-content:space-between;align-items:center;gap:8px}.km-foot button{color:white;background:#253447;border:1px solid #4b617b;border-radius:6px;font:inherit;padding:5px 10px}.km-foot span{color:#bdcce0;font-size:.85rem}.km-note{margin:0;color:#aebdd0;font-size:.73rem;line-height:1.35}@media(min-width:800px){.kilometer-panel{width:min(100%,740px);align-self:center;border:1px solid #52657a;border-radius:10px 10px 0 0;padding-inline:16px}}
+.map-choose{display:flex;align-items:center;gap:8px;padding:7px 12px;background:#121821;font-size:.88rem}.map-choose select,.map-choose button{color:white;background:#263346;border:1px solid #788ea8;border-radius:6px;padding:7px;font:inherit}.map-choose select{flex:1;min-width:0}.map-choose button{white-space:nowrap}.map-choose button[hidden]{display:none}.map{flex:1!important}</style></head><body><div class="app"><header class="top"><div class="header"><a class="back" href="./">← 首頁</a><h1>國道即時路況</h1><span style="width:3rem"></span></div><nav class="tabs" aria-label="查看區域"><button data-region="north" aria-selected="true">北部</button><button data-region="middle">中部</button><button data-region="south">南部</button><button data-region="all">全臺</button></nav></header><div class="info"><div class="legend" aria-label="路況顏色說明"><span class="chip"><i class="swatch" style="background:#21db70"></i>順暢</span><span class="chip"><i class="swatch" style="background:#ffe344"></i>車多</span><span class="chip"><i class="swatch" style="background:#ff9926"></i>緩慢</span><span class="chip"><i class="swatch" style="background:#ff304a"></i>壅塞</span><span class="chip"><i class="swatch" style="background:#b44bff"></i>嚴重</span></div><div class="actions"><button class="refresh" id="locate" type="button">◎ 我的位置</button><button class="refresh" id="refresh" type="button">更新</button></div></div><div class="time" id="status" role="status">讀取路況中…</div><div class="map-choose"><label for="road-select-map">選擇國道</label><select id="road-select-map" aria-label="地圖國道"><option value="1">國道1號</option><option value="2">國道2號</option><option value="3">國道3號</option><option value="4">國道4號</option><option value="5">國道5號</option><option value="6">國道6號</option><option value="8">國道8號</option><option value="10">國道10號</option></select><button id="level-map" type="button">切換至國一高架</button></div><div id="map" class="map" aria-label="每公里方格國道路況地圖"></div><section class="kilometer-panel" aria-label="每公里雙向路況"><div class="km-toolbar"><strong>每公里路況</strong><select id="road-select" aria-label="選擇國道"><option value="1">國道1號</option><option value="2">國道2號</option><option value="3">國道3號</option><option value="4">國道4號</option><option value="5">國道5號</option><option value="6">國道6號</option><option value="8">國道8號</option><option value="10">國道10號</option></select></div><div class="km-heading" id="km-heading"><span>里程</span><span>平面<br>北上</span><span>平面<br>南下</span><span>高架<br>北上</span><span>高架<br>南下</span></div><div class="km-list" id="km-list" role="table" aria-label="各公里與雙向路況"></div><div class="km-foot"><button id="km-prev" type="button">前段</button><span id="km-range"></span><button id="km-next" type="button">後段</button></div><p class="km-note">一公里一排；實色方格代表該公里測點路況，灰色代表無資料。定位會選附近路段，無法判定平面或高架。</p></section><footer class="foot">資料：<a href="https://data.gov.tw/dataset/37662" target="_blank" rel="noopener">高公局車輛偵測器</a>；底圖 © OpenStreetMap、CARTO；<a href="https://github.com/watermelon1024/freeway-speed-ui" target="_blank" rel="noopener">路段線型</a>（<a href="GEOMETRY-LICENSE.txt">授權</a>）。灰色路線代表該段暫無有效偵測值。<a href="https://1968.freeway.gov.tw/" target="_blank" rel="noopener">官方 1968</a></footer></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>
 const statusEl = document.querySelector('#status');
 const locateButton = document.querySelector('#locate');
 const views = {
-  north: { center: [25.02, 121.40], zoom: 10 },
+  north: { center: [25.05, 121.30], zoom: 13 },
   middle: { center: [24.11, 120.76], zoom: 10 },
   south: { center: [22.85, 120.46], zoom: 10 },
   all: { center: [23.74, 120.9], zoom: 7 }
@@ -162,7 +162,7 @@ function chooseRouteAt(latitude, longitude) {
   if (!nearest) return;
   const road = /^N(\d+)/.exec(nearest.code);
   roadNumber = road[1]; roadLevel = nearest.code === 'N1H' ? 'elevated' : 'flat';
-  roadSelect.value = roadNumber;
+  roadSelect.value = roadNumber; document.querySelector('#road-select-map').value = roadNumber; updateLevelButton();
   kilometerStart = Math.max(0, nearest.kilometer - 2);
   renderKilometers();
 }
@@ -186,17 +186,77 @@ function nearby(feature, latitude, longitude, radiusKm) {
   const lines = geometry.type === 'LineString' ? [geometry.coordinates] : geometry.coordinates;
   return lines.some(line => lineDistanceKm(line, latitude, longitude) <= radiusKm);
 }
+// Link IDs contain the kilometer position in hundredths after the 8-character carriageway code.
+const carriageways = {
+  '00001000':['N1','S'], '00001001':['N1','N'],
+  '00001A00':['N1H','S'], '00001A01':['N1H','N'],
+  '00001B00':['N1H','S'], '00001B01':['N1H','N'],
+  '00002000':['N2','E'], '00002001':['N2','W'],
+  '00003000':['N3','S'], '00003001':['N3','N'],
+  '00004000':['N4','E'], '00004001':['N4','W'],
+  '00005000':['N5','S'], '00005001':['N5','N'],
+  '00006000':['N6','E'], '00006001':['N6','W'],
+  '00008000':['N8','E'], '00008001':['N8','W'],
+  '00010000':['N10','E'], '00010001':['N10','W']
+};
+let mapCells = [];
+function buildMapCells() {
+  mapCells = [];
+  const groups = new Map();
+  for (const feature of roads.features) {
+    const id = feature.properties.id;
+    const route = carriageways[id.slice(0,8)];
+    const mile = Number(id.slice(8,13)) / 100;
+    if (!route || !Number.isFinite(mile) || mile > 500 || feature.geometry.type !== 'LineString') continue;
+    if (!groups.has(id.slice(0,8))) groups.set(id.slice(0,8), []);
+    groups.get(id.slice(0,8)).push({ feature, mile, route });
+  }
+  for (const entries of groups.values()) {
+    entries.sort((a,b) => a.mile-b.mile);
+    for (let i=0;i<entries.length;i++) {
+      const {feature,mile,route} = entries[i];
+      const line=feature.geometry.coordinates;
+      if (line.length<2) continue;
+      const next=entries[i+1]?.mile;
+      // A missing next marker uses the physical length of the road geometry.
+      const lengths=[0];
+      for(let j=1;j<line.length;j++) lengths.push(lengths[j-1]+Math.hypot((line[j][0]-line[j-1][0])*101,(line[j][1]-line[j-1][1])*111));
+      const total=lengths.at(-1);
+      if (!total) continue;
+      const end=next>mile && next-mile<3 ? next : mile+total;
+      if (end-mile>3) continue;
+      const pointAt=fraction=>{
+        const target=fraction*total;let j=1;
+        while(j<lengths.length-1 && lengths[j]<target) j++;
+        const f=(target-lengths[j-1])/(lengths[j]-lengths[j-1]||1);
+        return [line[j-1][0]+f*(line[j][0]-line[j-1][0]),line[j-1][1]+f*(line[j][1]-line[j-1][1])];
+      };
+      let from=mile;
+      while(from<end-0.00001){
+        const to=Math.min(end,Math.floor(from+0.00001)+1);
+        const a=(from-mile)/(end-mile), b=(to-mile)/(end-mile);
+        const coordinates=[pointAt(a)];
+        for(let j=1;j<line.length-1;j++) if(lengths[j]/total>a && lengths[j]/total<b) coordinates.push(line[j]);
+        coordinates.push(pointAt(b));
+        mapCells.push({code:route[0],direction:route[1],kilometer:Math.floor(from+0.00001),coordinates});
+        from=to;
+      }
+    }
+  }
+}
+function updateLevelButton() {
+  const button=document.querySelector('#level-map');
+  button.hidden=roadNumber!=='1';
+  button.textContent=roadLevel==='flat'?'切換至國一高架':'切換至國一平面';
+}
 function displayedRoads() {
-  if (!roads) return roads;
-  const selected = roads.features.filter(f => linkMeta.get(f.properties.id)?.code === routeCode());
-  if (region !== 'nearby' || !userPosition) return { type: 'FeatureCollection', features: selected };
-  const [latitude, longitude] = userPosition;
-  let features = selected.filter(f => nearby(f, latitude, longitude, 12));
-  if (!features.length) features = selected.filter(f => nearby(f, latitude, longitude, 25));
-  if (!features.length) features = selected.filter(f => nearby(f, latitude, longitude, 60));
-  nearbyFeatures = features;
-  statusEl.textContent = features.length ? '附近國道路況｜' + dataMessage : '附近沒有此國道路段｜' + dataMessage;
-  return { type: 'FeatureCollection', features };
+  const selected=mapCells.filter(c=>c.code===routeCode());
+  if(region!=='nearby'||!userPosition) return selected;
+  const [lat,lon]=userPosition;
+  const close=selected.filter(c=>lineDistanceKm(c.coordinates,lat,lon)<12);
+  const wider=close.length?close:selected.filter(c=>lineDistanceKm(c.coordinates,lat,lon)<40);
+  statusEl.textContent=wider.length?'附近國道路況｜'+dataMessage:'附近沒有此國道路段｜'+dataMessage;
+  return wider;
 }
 function severity(feature) {
   const value = traffic?.get(feature.properties.id);
@@ -208,38 +268,19 @@ function draw() {
   if (!roads || !map) return;
   if (roadLayer) roadLayer.remove();
   if (casingLayer) casingLayer.remove();
-  const source = displayedRoads();
-  const ordered = [...source.features].sort((a, b) => severity(a) - severity(b));
-  const renderer = L.canvas({ padding: .5 });
-  const narrow = matchMedia('(max-width: 700px)').matches;
-  const stroke = narrow ? 9 : 8;
-  // An opaque dark casing keeps each saturated route distinct from the basemap.
-  casingLayer = L.geoJSON({ type: 'FeatureCollection', features: ordered.filter(f => severity(f) > 0) }, {
-    renderer, interactive: false,
-    style: { color: '#07090d', weight: stroke + 5, opacity: 1, lineCap: 'round', lineJoin: 'round' }
-  }).addTo(map);
-  roadLayer = L.geoJSON({ type: 'FeatureCollection', features: ordered }, {
-    renderer,
-    style: feature => {
-      const value = traffic?.get(feature.properties.id);
-      return { color: color(value ? Math.round(value.weighted / value.volume) : null),
-        weight: value ? stroke : 3, opacity: 1, lineCap: 'round', lineJoin: 'round' };
-    },
-    onEachFeature: (feature, layer) => layer.on('click', () => {
-      const value = traffic?.get(feature.properties.id);
-      const speed = value ? Math.round(value.weighted / value.volume) : null;
-      const label = speed === null ? '暫無有效路況' : speed < 20 ? '嚴重壅塞' :
-        speed < 40 ? '壅塞' : speed < 60 ? '緩慢' : speed < 80 ? '車多' : '順暢';
-      const box = document.createElement('div');
-      const title = document.createElement('strong');
-      title.textContent = feature.properties.name || '國道路段';
-      const state = document.createElement('p');
-      state.textContent = label;
-      box.append(title, state);
-      layer.bindPopup(box).openPopup();
-    })
-  }).addTo(map);
-  if (userMarker) userMarker.bringToFront();
+  const cells=displayedRoads();
+  const renderer=L.svg({padding:.5});
+  casingLayer=L.layerGroup().addTo(map);
+  roadLayer=L.layerGroup().addTo(map);
+  for(const cell of cells){
+    const latlngs=cell.coordinates.map(([lon,lat])=>[lat,lon]);
+    const item=kilometerBins.get(cell.code+':'+cell.direction+':'+cell.kilometer);
+    const label=congestionName(item?.speed??null);
+    L.polyline(latlngs,{renderer,color:'#080b0f',weight:20,opacity:1,lineCap:'butt',lineJoin:'bevel',interactive:false}).addTo(casingLayer);
+    L.polyline(latlngs,{renderer,color:color(item?.speed??null),weight:14,opacity:1,lineCap:'butt',lineJoin:'bevel'})
+      .bindPopup(cell.code+' '+cell.kilometer+'K '+({N:'北上',S:'南下',E:'東行',W:'西行'}[cell.direction])+'：'+label).addTo(roadLayer);
+  }
+  if(userMarker) userMarker.bringToFront();
 }
 function focusNearby() {
   if (!nearbyFeatures.length || !userPosition) return;
@@ -270,6 +311,7 @@ async function load() {
     ]);
     if (!response.ok) throw Error('資料讀取失敗');
     roads = geometry;
+    buildMapCells();
     const snapshot = await response.json();
     traffic = values(snapshot);
     buildKilometerData(snapshot);
@@ -294,7 +336,7 @@ function select(name) {
   }
   statusEl.textContent = dataMessage;
   if (userMarker) { userMarker.remove(); userMarker = null; }
-  map.setView(views[name].center, views[name].zoom);
+  map.setView(views[name].center, name === 'all' ? 8 : 13);
   const selected = nearestRoute(...views[name].center);
   if (selected && selected.code === routeCode()) kilometerStart = Math.max(0, selected.kilometer - 2);
   renderKilometers();
@@ -321,8 +363,7 @@ function locate() {
       interactive: false
     }).addTo(map);
     draw();
-    if (nearbyFeatures.length) focusNearby();
-    else map.setView(userPosition, 11);
+    map.setView(userPosition, 13);
   }, error => {
     locateButton.disabled = false;
     const detail = error.code === 1 ? '請在瀏覽器允許位置存取。' : '無法取得位置，請稍後再試。';
@@ -338,9 +379,19 @@ if (window.L) {
   document.querySelectorAll('[data-region]').forEach(button => button.onclick = () => select(button.dataset.region));
   document.querySelector('#refresh').onclick = load;
   locateButton.onclick = locate;
+  document.querySelector('#road-select-map').onchange = event => {
+    roadNumber = event.target.value; roadSelect.value = roadNumber; roadLevel = 'flat';
+    updateLevelButton(); renderKilometers(); draw();
+  };
+  document.querySelector('#level-map').onclick = () => {
+    roadLevel = roadLevel === 'flat' ? 'elevated' : 'flat';
+    updateLevelButton(); draw();
+  };
+  updateLevelButton();
   roadSelect.onchange = () => {
     roadNumber = roadSelect.value;
     roadLevel = 'flat';
+    document.querySelector('#road-select-map').value = roadNumber; updateLevelButton();
     kilometerStart = 0;
     renderKilometers();
     draw();
