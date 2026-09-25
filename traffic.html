@@ -16,6 +16,10 @@ const views = {
 let map, roadLayer, casingLayer, roads, traffic, userMarker, userPosition, nearbyFeatures = [];
 let region = 'north', directionView = 'both', dataMessage = '讀取路況中…';
 
+function staleSnapshot(snapshot) {
+  const age=Date.now()-new Date(snapshot.sourceTime||snapshot.generatedAt).getTime();
+  return !Number.isFinite(age)||age>30*60000;
+}
 function stamp(value) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? '時間未提供' : new Intl.DateTimeFormat('zh-TW', {
@@ -238,6 +242,34 @@ function draw() {
   }
   if(userMarker) userMarker.bringToFront();
 }
+// TDX offers a second official feed when the Freeway Bureau host is unreachable.
+async function tdxSnapshot(reference) {
+  const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),9000);
+  try {
+    const url='https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/Live/VD/Freeway?%24top=3000&%24format=JSON';
+    const response=await fetch(url,{cache:'no-store',signal:controller.signal});
+    if(!response.ok) throw Error('TDX 回應失敗');
+    const result=await response.json();
+    const known=new Map(reference.rows.map(row=>[row.id,row]));
+    const rows=[];
+    for(const vd of result.VDLives||[]) {
+      if(Number(vd.Status)!==0) continue;
+      for(const flow of vd.LinkFlows||[]) {
+        const old=known.get(vd.VDID+':'+flow.LinkID);
+        if(!old) continue;
+        const lanes=(flow.Lanes||[]).map(lane=>({
+          speed:Number(lane.Speed),
+          volume:(lane.Vehicles||[]).reduce((sum,v)=>sum+Number(v.Volume),0)
+        })).filter(lane=>Number.isFinite(lane.speed)&&lane.speed>=0&&Number.isFinite(lane.volume)&&lane.volume>=0);
+        if(lanes.length) rows.push({...old,time:vd.DataCollectTime,lanes});
+      }
+    }
+    const sourceTime=result.SrcUpdateTime||result.UpdateTime;
+    if(rows.length<100||!sourceTime||Date.now()-new Date(sourceTime).getTime()>15*60000)
+      throw Error('TDX 資料不足或過期');
+    return {rows,sourceTime};
+  } finally {clearTimeout(timer);}
+}
 // Ask the official one-minute feed on every page visit. A Pages snapshot is only a fallback.
 async function freshSnapshot(reference) {
   const controller=new AbortController();
@@ -269,6 +301,7 @@ async function freshSnapshot(reference) {
     if(rows.length<100) throw Error('官方測點資料不足');
     const rawTime=value(xml,'UpdateTime')||rows[0].time;
     const sourceTime=/Z$|[+-]\d\d:\d\d$/.test(rawTime)?rawTime:rawTime+'+08:00';
+    if(Date.now()-new Date(sourceTime).getTime()>15*60000) throw Error('官方資料過期');
     return {rows,sourceTime};
   } finally { clearTimeout(timer); }
 }
@@ -287,13 +320,15 @@ async function load() {
     buildMapCells();
     const cached = await response.json();
     let snapshot=cached, direct=false;
-    try { snapshot=await freshSnapshot(cached); direct=true; } catch(error) { /* Keep the dated fallback. */ }
-    traffic = values(snapshot);
+    try { snapshot=await freshSnapshot(cached); direct=true; }
+    catch(error) { try {snapshot=await tdxSnapshot(cached); direct=true;} catch(fallbackError) { /* No current data. */ } }
+    traffic = direct || !staleSnapshot(snapshot) ? values(snapshot) : new Map();
     buildKilometerData(snapshot);
+    if(staleSnapshot(snapshot)) kilometerBins.clear();
     const sourceTime = snapshot.sourceTime || snapshot.generatedAt;
     const age = Date.now() - new Date(sourceTime).getTime();
     const stale = !Number.isFinite(age) || age > 30 * 60 * 1000;
-    dataMessage = (stale ? '⚠ 資料已過期｜' : '') + (direct ? '官方資料｜' : '⚠ 官方來源未連線，顯示快照｜') + '資料時間：' + stamp(sourceTime);
+    dataMessage = (stale ? '⚠ 資料已過期，地圖灰色｜' : '') + (direct ? '官方資料｜' : '⚠ 官方來源未連線｜') + '資料時間：' + stamp(sourceTime);
     statusEl.classList.toggle('stale', stale || !direct);
     statusEl.textContent = dataMessage;
     draw();
