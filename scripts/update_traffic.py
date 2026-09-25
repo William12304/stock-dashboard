@@ -89,6 +89,14 @@ def main():
         print(f"Updated {len(rows)} traffic detector rows")
     except Exception as error:
         print(f"Traffic source unavailable: {error}")
+        cached = Path("traffic.json")
+        if cached.exists():
+            try:
+                if json.loads(cached.read_text(encoding="utf-8")).get("rows"):
+                    print("Preserving repository snapshot")
+                    return
+            except (ValueError, OSError):
+                pass
         try:
             request = Request(SITE, headers={"User-Agent": "Mozilla/5.0"})
             with urlopen(request, timeout=15) as response:
