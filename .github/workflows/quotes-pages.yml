@@ -36,7 +36,7 @@ jobs:
       - name: Prepare public files
         run: |
           mkdir -p _site
-          cp index.html stocks.html traffic.html quotes.js quotes.json traffic.json _site/
+          cp index.html stocks.html traffic.html highway_links.geojson GEOMETRY-LICENSE.txt quotes.js quotes.json traffic.json _site/
       - uses: actions/upload-pages-artifact@v4
         with:
           path: _site
