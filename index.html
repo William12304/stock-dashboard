@@ -32,7 +32,7 @@
     .traffic{background:radial-gradient(circle at 83% 2%,#76ffc4 0%,transparent 50%),linear-gradient(145deg,#08d985 0%,#00ac9c 55%,#006b79 100%)}
     .docking{background:radial-gradient(circle at 85% 0%,#f5a4ff 0%,transparent 53%),linear-gradient(145deg,#b94fff 0%,#6827e8 55%,#2514a9 100%)}
     .windy{background:radial-gradient(circle at 83% 0%,#ffe87d 0%,transparent 50%),linear-gradient(145deg,#ffb026 0%,#fc593c 56%,#e51d60 100%)}
-    .custom{background:radial-gradient(circle at 85% 0%,#ffcb7d 0%,transparent 52%),linear-gradient(145deg,#faaa28,#d65b34 60%,#9b2452)}
+    .scanner{background:radial-gradient(circle at 84% 0%,#b1e6ff 0%,transparent 52%),linear-gradient(145deg,#3c9fff,#554fe1 57%,#5e27a9)}\n    .custom{background:radial-gradient(circle at 85% 0%,#ffcb7d 0%,transparent 52%),linear-gradient(145deg,#faaa28,#d65b34 60%,#9b2452)}
     .icon{width:clamp(66px,20vw,112px);height:clamp(66px,20vw,112px);display:grid;place-items:center;flex:none;filter:drop-shadow(0 3px 7px #08001755)}
     .icon svg{width:100%;height:100%;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;fill:none}
     .title{position:absolute;bottom:18px;left:12px;right:12px;text-align:center;font-size:clamp(18px,4.8vw,26px);font-weight:760;line-height:1.22;letter-spacing:-.025em;overflow-wrap:anywhere;text-shadow:0 2px 6px #13062777}
@@ -73,6 +73,9 @@
     </a>
     <a class="card windy" href="https://www.windy.com/" data-id="windy" data-search="Windy 天氣 風場 颱風 海象 氣象" aria-label="Windy：開啟風場與天氣地圖">
       <span class="icon" aria-hidden="true"><svg viewBox="0 0 36 36"><path d="M3 14h21c8 0 8-10 1-10-4 0-6 3-5 5M3 21h27c6 0 6 9 0 9-3 0-5-2-5-4M3 28h15c6 0 6 6 2 6"/></svg></span><span class="title">Windy 天氣</span>
+    </a>
+    <a class="card scanner" href="card-scan.html" data-id="scanner" data-search="名片 掃描 相機 聯絡人 OCR" aria-label="名片掃描：拍照加入聯絡人">
+      <span class="icon" aria-hidden="true"><svg viewBox="0 0 36 36"><path d="M7 12V7h5M24 7h5v5M29 24v5h-5M12 29H7v-5M12 16h12M12 21h9M12 26h6"/></svg></span><span class="title">名片掃描</span>
     </a>
   </nav>
   <p id="empty" class="empty" role="status">沒有符合的捷徑</p>
