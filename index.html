@@ -16,20 +16,19 @@
     input{width:100%;border:0;outline:0;background:transparent;color:#fff;font:inherit;font-size:17px}
     input::placeholder{color:#9e9ea5}
     .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:20px}
-    .card{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:145px;aspect-ratio:1.35;padding:20px;border-radius:28px;overflow:hidden;text-decoration:none;color:#fff;isolation:isolate;box-shadow:inset 0 1px 0 #ffffff25;transition:transform .16s ease,filter .16s ease}
-    .card::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 72% 7%,#ffffff26,transparent 58%)}
+    .card{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:clamp(166px,42vw,220px);padding:18px;border-radius:28px;overflow:hidden;text-decoration:none;color:#fff;isolation:isolate;box-shadow:inset 0 1px 0 #ffffff25;transition:transform .16s ease,filter .16s ease}
     .card[hidden]{display:none}
     .card:hover{transform:translateY(-2px);filter:brightness(1.08)}
     .card:active{transform:scale(.975)}
     .card:focus-visible{outline:3px solid white;outline-offset:3px}
-    .stocks{background:linear-gradient(145deg,#196fc5,#035191)}
-    .traffic{background:linear-gradient(145deg,#14a66f,#08734f)}
-    .docking{background:linear-gradient(145deg,#9a63c4,#603491)}
-    .icon{width:36px;height:36px;display:grid;place-items:center}
+    .stocks{background:radial-gradient(circle at 85% 5%,#51baffaa,transparent 62%),linear-gradient(145deg,#1498e9 0%,#096bb4 47%,#123d98 100%)}
+    .traffic{background:radial-gradient(circle at 88% 3%,#76efaf99,transparent 62%),linear-gradient(145deg,#12bdaa 0%,#0a9c80 48%,#076c59 100%)}
+    .docking{background:radial-gradient(circle at 85% 0%,#e7afffa3,transparent 64%),linear-gradient(145deg,#ad6fd2 0%,#8550b7 50%,#51308a 100%)}
+    .icon{width:36px;height:36px;display:grid;place-items:center;flex:none}
     .icon svg{width:34px;height:34px;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;fill:none}
-    .title{font-size:clamp(19px,4.8vw,27px);font-weight:720;line-height:1.18;letter-spacing:-.025em;text-wrap:balance}
+    .title{font-size:clamp(19px,4.8vw,27px);font-weight:720;line-height:1.25;letter-spacing:-.025em;overflow-wrap:anywhere}
     .empty{display:none;text-align:center;color:#a8a8ae;padding:42px 0}
-    @media(max-width:370px){.card{padding:16px;border-radius:23px;min-height:128px}.grid{gap:11px}}
+    @media(max-width:370px){.card{padding:16px;border-radius:23px;min-height:160px}.grid{gap:11px}}
     @media(prefers-reduced-motion:reduce){.card{transition:none}}
   </style>
 </head>
