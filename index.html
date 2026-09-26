@@ -20,20 +20,22 @@
     .search svg{width:22px;height:22px;flex:none}
     input{width:100%;border:0;outline:0;background:transparent;color:#fff;font:inherit;font-size:17px}
     input::placeholder{color:#9e9ea5}
-    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:20px}
-    .card{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:clamp(166px,42vw,220px);padding:18px;border-radius:28px;overflow:hidden;text-decoration:none;color:#fff;isolation:isolate;box-shadow:inset 0 1px 0 #ffffff25;transition:transform .16s ease,filter .16s ease}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}
+    .card{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1/1;min-width:0;padding:18px 12px 48px;border-radius:clamp(25px,7vw,38px);overflow:hidden;text-decoration:none;color:#fff;isolation:isolate;box-shadow:inset 0 2px 2px #ffffff50,inset 0 -8px 20px #07001433,0 12px 24px #0007;transition:transform .16s ease,filter .16s ease}
+    .card::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 78% -10%,#ffffff91,transparent 45%),linear-gradient(150deg,#ffffff38 0%,transparent 38%,#0a002c29 100%);opacity:.64}
+    .card::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(170deg,transparent 47%,#00000069 100%)}
     .card[hidden]{display:none}
     .card:hover{transform:translateY(-2px);filter:brightness(1.08)}
     .card:active{transform:scale(.975)}
     .card:focus-visible{outline:3px solid white;outline-offset:3px}
-    .stocks{background:radial-gradient(circle at 85% 5%,#51baffaa,transparent 62%),linear-gradient(145deg,#1498e9 0%,#096bb4 47%,#123d98 100%)}
-    .traffic{background:radial-gradient(circle at 88% 3%,#76efaf99,transparent 62%),linear-gradient(145deg,#12bdaa 0%,#0a9c80 48%,#076c59 100%)}
-    .docking{background:radial-gradient(circle at 85% 0%,#e7afffa3,transparent 64%),linear-gradient(145deg,#ad6fd2 0%,#8550b7 50%,#51308a 100%)}
-    .windy{background:radial-gradient(circle at 85% 0%,#ffc37dba,transparent 65%),linear-gradient(145deg,#ef714c 0%,#d64b53 50%,#983071 100%)}
-    .custom{background:radial-gradient(circle at 82% 0%,#ffba70b3,transparent 64%),linear-gradient(145deg,#ed9d21,#ba5713 56%,#89371a)}
-    .icon{width:36px;height:36px;display:grid;place-items:center;flex:none}
-    .icon svg{width:34px;height:34px;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;fill:none}
-    .title{font-size:clamp(19px,4.8vw,27px);font-weight:720;line-height:1.25;letter-spacing:-.025em;overflow-wrap:anywhere}
+    .stocks{background:radial-gradient(circle at 85% 4%,#37e8ff 0%,transparent 48%),linear-gradient(145deg,#168eff 0%,#064cf2 56%,#141aa4 100%)}
+    .traffic{background:radial-gradient(circle at 83% 2%,#76ffc4 0%,transparent 50%),linear-gradient(145deg,#08d985 0%,#00ac9c 55%,#006b79 100%)}
+    .docking{background:radial-gradient(circle at 85% 0%,#f5a4ff 0%,transparent 53%),linear-gradient(145deg,#b94fff 0%,#6827e8 55%,#2514a9 100%)}
+    .windy{background:radial-gradient(circle at 83% 0%,#ffe87d 0%,transparent 50%),linear-gradient(145deg,#ffb026 0%,#fc593c 56%,#e51d60 100%)}
+    .custom{background:radial-gradient(circle at 85% 0%,#ffcb7d 0%,transparent 52%),linear-gradient(145deg,#faaa28,#d65b34 60%,#9b2452)}
+    .icon{width:clamp(66px,20vw,112px);height:clamp(66px,20vw,112px);display:grid;place-items:center;flex:none;filter:drop-shadow(0 3px 7px #08001755)}
+    .icon svg{width:100%;height:100%;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;fill:none}
+    .title{position:absolute;bottom:18px;left:12px;right:12px;text-align:center;font-size:clamp(18px,4.8vw,26px);font-weight:760;line-height:1.22;letter-spacing:-.025em;overflow-wrap:anywhere;text-shadow:0 2px 6px #13062777}
     .empty{display:none;text-align:center;color:#a8a8ae;padding:42px 0}
     .tip{color:#9e9ea5;font-size:13px;margin:18px 2px}
     dialog{width:min(92vw,380px);max-height:85svh;overflow:auto;border:1px solid #3b3b40;border-radius:24px;padding:22px;background:#202024;color:white;box-shadow:0 24px 80px #000a}
@@ -49,7 +51,7 @@
     .recommendation{min-height:72px;border:1px solid #505058;border-radius:14px;padding:11px;text-align:left;background:#313139;color:#fff;font:inherit;cursor:pointer}
     .recommendation strong,.recommendation small{display:block}.recommendation strong{font-size:15px}.recommendation small{font-size:12px;color:#bebec5;margin-top:4px}.recommendation:disabled{opacity:.55;cursor:default}
     .form-section{border-top:1px solid #45454b;padding-top:18px;font-size:16px;font-weight:700}
-    @media(max-width:370px){.card{padding:16px;border-radius:23px;min-height:160px}.grid{gap:11px}}
+    @media(max-width:370px){.card{border-radius:24px;padding-bottom:42px}.title{bottom:14px;font-size:18px}.grid{gap:11px}}
     @media(prefers-reduced-motion:reduce){.card{transition:none}}
   </style>
 </head>
