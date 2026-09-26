@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <title>名片掃描 · 我的捷徑</title>
+  <style>
+    *{box-sizing:border-box}
+    html{background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}
+    body{margin:0;min-height:100svh}
+    main{max-width:600px;margin:auto;padding:24px 18px max(112px,env(safe-area-inset-bottom))}
+    header{display:flex;align-items:center;gap:13px;margin:12px 0 21px}
+    .mark{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-size:29px;background:radial-gradient(circle at 80% 0%,#acddff,transparent 54%),linear-gradient(135deg,#458dff,#6743d9);box-shadow:0 9px 24px #3c40bd55}
+    h1{font-size:31px;letter-spacing:-.04em;margin:0}p{color:#aaaab3;line-height:1.5;margin:8px 0 18px}
+    .panel{border:1px solid #303039;border-radius:24px;background:#1c1c21;padding:19px;margin:18px 0}
+    .capture{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    button,.pick{font:inherit;border:0;cursor:pointer;border-radius:15px;min-height:53px;color:#fff;font-weight:700;display:grid;place-items:center;text-align:center}
+    .pick{background:linear-gradient(130deg,#5d99ff,#5a50d9)}.pick.secondary{background:#34343e}
+    .pick input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+    #preview{display:none;width:100%;max-height:330px;object-fit:contain;border-radius:15px;margin-top:15px;background:#111}
+    #status{min-height:24px;color:#b5c9ff;font-size:14px;margin:14px 0 0}
+    .hidden{display:none!important}
+    h2{font-size:20px;margin:0 0 12px}
+    .fields{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+    label.field{display:grid;gap:6px;color:#adadb6;font-size:13px}
+    label.full{grid-column:1/-1}
+    input,textarea{width:100%;font:inherit;font-size:16px;color:white;background:#2b2b32;border:1px solid #484852;border-radius:12px;padding:12px;outline:none}
+    input:focus,textarea:focus{border-color:#91b6ff;box-shadow:0 0 0 2px #518aff44}
+    textarea{resize:vertical;min-height:77px}
+    .hint{font-size:13px;color:#a7a7b1;margin:4px 0 14px}
+    .save{width:100%;background:linear-gradient(135deg,#498bff,#664fd7)}
+    .share{width:100%;background:#33343e;margin-top:9px}
+    .back{position:fixed;right:18px;bottom:max(19px,env(safe-area-inset-bottom));background:#303038ed;color:#fff;border:1px solid #555562;border-radius:30px;text-decoration:none;padding:14px 18px;font-size:16px;font-weight:700;box-shadow:0 7px 24px #0009;z-index:10}
+    @media(max-width:370px){.fields{grid-template-columns:1fr}.capture{grid-template-columns:1fr}}
+  </style>
+</head>
+<body><main>
+  <header><div class="mark" aria-hidden="true">▣</div><div><h1>名片掃描</h1><p style="margin:2px 0 0">拍照辨識，核對後加入聯絡人</p></div></header>
+  <section class="panel">
+    <div class="capture">
+      <label class="pick">📷 拍攝名片<input id="camera" type="file" accept="image/*" capture="environment"></label>
+      <label class="pick secondary">▧ 選擇照片<input id="photo" type="file" accept="image/*"></label>
+    </div>
+    <img id="preview" alt="待辨識名片照片">
+    <p id="status" role="status">請將名片平放、對焦清楚再拍攝。首次辨識需要下載中文與英文文字模型。</p>
+  </section>
+  <section class="panel hidden" id="result">
+    <h2>確認聯絡人資料</h2>
+    <p class="hint">辨識結果可能把職稱、公司或數字放錯欄位，儲存前請逐項核對。</p>
+    <form id="contact-form">
+      <div class="fields">
+        <label class="field">姓名<input name="name" autocomplete="off" required></label>
+        <label class="field">公司<input name="company" autocomplete="off"></label>
+        <label class="field full">職稱<input name="title" autocomplete="off"></label>
+        <label class="field">手機<input name="mobile" type="tel" autocomplete="off"></label>
+        <label class="field">電話<input name="phone" type="tel" autocomplete="off"></label>
+        <label class="field full">電子郵件<input name="email" type="email" autocomplete="off"></label>
+        <label class="field full">網站<input name="website" type="url" autocomplete="off"></label>
+        <label class="field full">地址<input name="address" autocomplete="off"></label>
+        <label class="field full">辨識原文（供核對）<textarea id="raw" spellcheck="false"></textarea></label>
+      </div>
+      <p class="hint">照片只在此裝置處理；按下方按鈕後，iPhone 會開啟名片檔，請在聯絡人畫面確認新增。</p>
+      <button class="save" type="submit">加入 iPhone 聯絡人</button>
+      <button class="share" id="share" type="button">分享名片檔</button>
+    </form>
+  </section>
+</main><a class="back" href="./">← 返回首頁</a>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script>
+  const statusEl=document.getElementById('status'),preview=document.getElementById('preview'),result=document.getElementById('result'),form=document.getElementById('contact-form');
+  let previewUrl=null,contactUrl=null;
+  function setStatus(message){statusEl.textContent=message}
+  function clean(value){return (value||'').replace(/^[\s:：·•|]+|[\s:：·•|]+$/g,'').trim()}
+  function parseCard(text){
+    const lines=text.split(/\r?\n/).map(clean).filter(Boolean),data={name:'',company:'',title:'',mobile:'',phone:'',email:'',website:'',address:''};
+    const email=text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);if(email)data.email=email[0];
+    const web=text.match(/(?:https?:\/\/)?(?:www\.)[A-Z0-9.-]+\.[A-Z]{2,}(?:\/[^\s]*)?/i);if(web)data.website=web[0].startsWith('http')?web[0]:'https://'+web[0];
+    for(const line of lines){
+      const labeled=line.match(/(?:手機|行動|mobile|cell|mob|m\s*[:：]|電話|tel|phone|fax|傳真)\s*[:：.]?\s*(\+?\d[\d\s().-]{6,}\d)/i);
+      const generic=line.match(/(?:\+886[\s.-]?)?0?\d[\d\s().-]{7,}\d/);
+      const number=clean((labeled||generic)?.[1]||(labeled||generic)?.[0]);
+      if(number&&!/fax|傳真/i.test(line)){
+        const compact=number.replace(/[^\d+]/g,'');
+        const mobile=/手機|行動|mobile|cell|mob/i.test(line)||/^(?:09\d{8}|\+8869\d{8}|8869\d{8})$/.test(compact);
+        const key=mobile?'mobile':'phone';if(!data[key])data[key]=number;
+      }
+      if(!data.address&&/地址|address|addr\b|路\d|街\d|巷\d|號|\d{3,6}\s*.{2,}(?:市|區)/i.test(line))data.address=clean(line.replace(/^(?:地址|address|addr)\s*[:：]?\s*/i,''));
+      if(!data.company&&/(?:公司|股份|企業|集團|有限公司|inc\.?|ltd\.?|corp\.?|corporation|co\.,?\s*ltd)/i.test(line))data.company=line;
+      if(!data.title&&/(?:經理|主任|董事|總監|業務|工程師|協理|副總|總經理|manager|director|engineer|president|sales|supervisor)/i.test(line)&&!data.company.includes(line))data.title=line;
+    }
+    const ignored=/[@]|(?:https?:|www\.)|(?:手機|電話|傳真|地址|address|mobile|cell|tel|phone|fax)\s*[:：]|(?:公司|股份|有限公司|inc\.?|ltd\.?|corp\.?)/i;
+    const names=lines.filter(line=>!ignored.test(line)&&!/[\d]/.test(line)&&line.length<32&&line!==data.title&&!/經理|主任|董事|總監|工程師|manager|director|engineer|president|sales/i.test(line));
+    data.name=names.find(line=>/^[\u3400-\u9fff]{2,4}$/.test(line))||names.find(line=>/^[A-Za-z]+(?:[ .-][A-Za-z]+){1,3}$/.test(line))||names[0]||'';
+    return data;
+  }
+  function fill(data){for(const key of ['name','company','title','mobile','phone','email','website','address'])form.elements[key].value=data[key]||''}
+  async function scan(file){
+    if(!file)return;
+    result.classList.add('hidden');if(previewUrl)URL.revokeObjectURL(previewUrl);
+    previewUrl=URL.createObjectURL(file);preview.src=previewUrl;preview.style.display='block';
+    setStatus('正在載入辨識工具，請稍候…');
+    if(!window.Tesseract){setStatus('辨識工具無法載入。請確認網路連線後重試。');return}
+    let worker;
+    try{
+      worker=await Tesseract.createWorker(['eng','chi_tra'],1,{logger:m=>{if(m.status==='recognizing text')setStatus('正在辨識名片… '+Math.round((m.progress||0)*100)+'%')}});
+      const {data}=await worker.recognize(file);
+      document.getElementById('raw').value=data.text.trim();
+      fill(parseCard(data.text));result.classList.remove('hidden');setStatus('辨識完成，請確認每個欄位。');
+      result.scrollIntoView({behavior:'smooth',block:'start'});
+    }catch(err){setStatus('辨識失敗，請重拍清楚的名片，或稍後再試。');console.error(err)}
+    finally{if(worker)await worker.terminate()}
+  }
+  for(const id of ['camera','photo'])document.getElementById(id).addEventListener('change',e=>{scan(e.target.files[0]);e.target.value='' });
+  function vcardEscape(value){return String(value||'').replace(/\\/g,'\\\\').replace(/\r?\n/g,'\\n').replace(/;/g,'\\;').replace(/,/g,'\\,')}
+  function fold(line){let out='',length=0;for(const char of line){const bytes=new TextEncoder().encode(char).length;if(length+bytes>75){out+='\r\n ';length=1}out+=char;length+=bytes}return out}
+  function contactFile(){
+    const d=Object.fromEntries(new FormData(form));
+    const lines=['BEGIN:VCARD','VERSION:3.0','N:;'+vcardEscape(d.name)+';;;','FN:'+vcardEscape(d.name)];
+    for(const [field,prefix] of [['company','ORG:'],['title','TITLE:'],['mobile','TEL;TYPE=CELL:'],['phone','TEL;TYPE=WORK:'],['email','EMAIL;TYPE=WORK:'],['website','URL:']])if(d[field])lines.push(prefix+vcardEscape(d[field]));
+    if(d.address)lines.push('ADR;TYPE=WORK:;;'+vcardEscape(d.address)+';;;;');
+    lines.push('END:VCARD');return new File([lines.map(fold).join('\r\n')+'\r\n'],(d.name||'聯絡人').replace(/[\\/:*?"<>|]/g,'')+'.vcf',{type:'text/vcard'});
+  }
+  form.addEventListener('submit',e=>{e.preventDefault();const file=contactFile();if(contactUrl)URL.revokeObjectURL(contactUrl);contactUrl=URL.createObjectURL(file);const a=document.createElement('a');a.href=contactUrl;a.download=file.name;document.body.append(a);a.click();a.remove();setStatus('已開啟名片檔；請在 iPhone 的聯絡人畫面確認新增。若只下載檔案，請在「檔案」App 中打開它。')});
+  document.getElementById('share').addEventListener('click',async()=>{if(!form.reportValidity())return;const file=contactFile();if(navigator.canShare?.({files:[file]})){try{await navigator.share({files:[file],title:'新增聯絡人'});return}catch(err){if(err.name==='AbortError')return}}setStatus('此瀏覽器未提供檔案分享，請使用「加入 iPhone 聯絡人」。')});
+</script></body></html>
